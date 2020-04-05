@@ -1,15 +1,125 @@
 <html>
-	<head>
-		<title>HELLO</title>
-	</head>
-	<body>
-		
-		<h1>HELLO </h1>
 
-	</body>
-	
-	<script>
-		console.log("Hello")
-	</script>
+<head>
+	<title>Fast-Link</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<style type="text/css">
+		body {
+			background: #f4f7fa;
+		}
+
+		.container {
+			padding-top: 40px;
+		}
+
+		.form-group-result {
+			padding-top: 20px;
+		}
+
+		#result_text {
+			padding-bottom: 12px;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col">
+			</div>
+			<div class="col-8">
+				<form id="getlink_form">
+					<div class="form-group">
+						<input type="text" class="form-control" id="link"
+							placeholder="Your link: Rapidgator, K2C, Uploaded.to" />
+					</div>
+					<button type="submit" class="btn btn-primary" id="submit_button">GetLink</button>
+					<div class="form-group form-group-result">
+						<input type="text" class="form-control" id="result_text" disabled="disabled" placeholder="Result: ..."/>
+						<a id="result" target="_blank"></a>
+					</div>
+				</form>
+			</div>
+			<div class="col">
+				<img src="asset/images/momo.jpg" alt="MOMO QRCODE" height="240px" width="200px">
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<script>
+	console.log("Hello")
+
+	$("#getlink_form").submit(function (event) {
+		event.preventDefault();
+
+		const link = $("#link").val();
+
+		if (link === "") {
+			$("#result_text").val("Link không hợp lệ.");
+			return;
+		}
+
+		$("#result").removeAttr("href");
+		$("#result_text").html("");
+		const data = {
+			"link": link
+		}
+
+		$.ajax({
+			url: 'http://localhost:8888/v1/api/getLink',
+			type: 'POST',
+			dataType: "json",
+			data: data,
+			beforeSend: function () {
+				const loading = `<button class="btn btn-primary" type="button" disabled id="processing_button">
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						Processing...
+					</button>`;
+				$(loading).insertBefore("#submit_button");
+				$("#submit_button").hide();
+
+			},
+			success: function (e) {
+				$("#processing_button").remove();
+				$("#submit_button").show();
+			},
+			error: function (e) {
+				var responseDatas = JSON.parse(e.responseText);
+			}
+		}).done(function (res) {
+			console.log("Sample of data:", res);
+			const status = res.status;
+			const data = res.data;
+			if (status === 0) {
+				$("#result_text").val("Link không hợp lệ.");
+				return;
+			} else if (status === 1) {
+				$("#result").attr("href", data);
+				$("#result").html("Download");
+				$("#result_text").val(data);
+				return;
+			} else {
+				$("#result_text").val("Hệ thống đang xảy ra lỗi, vui lòng quay lại sau.");
+				return;
+			}
+		});
+	});
+
+</script>
 
 </html>
