@@ -75,7 +75,7 @@
 		}
 
 		$.ajax({
-			url: 'http://34.87.121.101/v1/api/getLink',
+			url: 'https://esc00.xyz/v1/api/getLink',
 			type: 'POST',
 			dataType: "json",
 			data: data,
@@ -100,7 +100,7 @@
 			const status = res.status;
 			const data = res.data;
 			if (status === 0) {
-				$("#result_text").val("Link không hợp lệ.");
+				$("#result_text").val("Link không hợp lệ / Host không được hỗ trợ.");
 				return;
 			} else if (status === 1) {
 				$("#result").attr("href", data);
